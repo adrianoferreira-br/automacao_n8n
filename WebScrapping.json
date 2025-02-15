@@ -1,0 +1,401 @@
+{
+  "name": "WebScrapping",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f3baa6fd-f905-41ac-b7d2-19322fc075f5",
+      "name": "When clicking \"Test workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -580,
+        280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "books",
+        "options": {}
+      },
+      "id": "c74e1689-b276-40a7-b470-29ca2f190814",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        80,
+        280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2c9b9bdb-9131-49cf-9ae6-8b5da0723a6c",
+      "name": "Convert to CSV File",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        860,
+        280
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "### You need to setup Microsoft Azure credentials with Microsoft Graph permissions.",
+        "height": 184.90255200662574
+      },
+      "id": "fe3d7177-defe-4fba-8c96-623da8a633e2",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        660,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Unlike Google Sheets where we did not need to have a certain format, here we need to create the column headers, otherwise the appending to the sheet won't work.",
+        "height": 183.1237982918667
+      },
+      "id": "e95dd117-0139-411a-91f7-87bd70721816",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        940,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### For these steps to work you will need to have Drive, Sheets and Gmail APIs enabled in your Google Cloud Account",
+        "height": 135.09744799337426
+      },
+      "id": "44a3a41c-f53e-44ec-b222-95791194e864",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1060,
+        480
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "books",
+              "cssSelector": ".row > li",
+              "returnValue": "html",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "50a4df6f-931f-4ece-9283-6ce246efa14e",
+      "name": "Extract all books from the page",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        -140,
+        280
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "price",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e8bf4dea-6915-4206-9965-c5cce3e00e73",
+      "name": "Sort by price",
+      "type": "n8n-nodes-base.sort",
+      "position": [
+        520,
+        280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "dataPropertyName": "books",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": "h3 > a",
+              "returnValue": "attribute",
+              "attribute": "title"
+            },
+            {
+              "key": "price",
+              "cssSelector": ".price_color"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "079d9b67-c356-4bf0-a411-268f2bbca7d4",
+      "name": "Extract individual book price",
+      "type": "n8n-nodes-base.html",
+      "position": [
+        300,
+        280
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1zyiRT7iIlfzZiskC9vDVoAFnW_UNMVXX0-ESVU1yYxY",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zyiRT7iIlfzZiskC9vDVoAFnW_UNMVXX0-ESVU1yYxY/edit?usp=drivesdk",
+          "cachedResultName": "Scraped Data"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zyiRT7iIlfzZiskC9vDVoAFnW_UNMVXX0-ESVU1yYxY/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "value": {},
+          "schema": [
+            {
+              "id": "title",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "title",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "price",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "price",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": []
+        },
+        "options": {}
+      },
+      "id": "cf9f5835-9371-475a-b90b-168d67f91a1f",
+      "name": "Save to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        860,
+        500
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FL33ZBTZkNAQE4Nf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "worksheet",
+        "operation": "append",
+        "workbook": {
+          "__rl": true,
+          "mode": "id",
+          "value": "=EA8A73F11507ECE9!24392"
+        },
+        "worksheet": {
+          "__rl": true,
+          "mode": "list",
+          "value": "{00000000-0001-0000-0000-000000000000}",
+          "cachedResultName": "Sheet1"
+        },
+        "dataMode": "autoMap",
+        "options": {}
+      },
+      "id": "d5f7f612-735d-475d-acc0-65924571382b",
+      "name": "Save to Microsoft Excel 365",
+      "type": "n8n-nodes-base.microsoftExcel",
+      "position": [
+        860,
+        60
+      ],
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "sendTo": "constact@mihai.ltd",
+        "subject": "bookstore csv",
+        "message": "Hey, here's the scraped data from the online bookstore!",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "id": "4affdf9a-97a4-4196-a59b-13f8d641a716",
+      "name": "Send CSV via e-mail",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1080,
+        280
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "ad814f23-c64c-4288-823d-ffd89e7c1b2e"
+    },
+    {
+      "parameters": {
+        "url": "http://books.toscrape.com",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "id": "4678be8b-349b-4824-ac0a-0cdd7277a263",
+      "name": "Fetch website content",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -360,
+        280
+      ],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "content": "## Automated Web Scraping: email a CSV, save to Google Sheets & Microsoft Excel\n\nSet-up steps:\n1. Change the website to scrape in the \"Fetch website content\" node\n2. Configure Microsoft Azure credentials with Microsoft Graph permissions (required for the Save to Microsoft Excel 365 node)\n3. Configure Google Cloud credentials with access to Google Drive, Google Sheets and Gmail APIs (the latter is required for the Send CSV via e-mail node).",
+        "height": 297,
+        "width": 579
+      },
+      "id": "acb82dfa-b0c8-44da-9001-3865f4c7e7a7",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -600,
+        -200
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking \"Test workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Fetch website content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Extract individual book price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to CSV File": {
+      "main": [
+        [
+          {
+            "node": "Send CSV via e-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract all books from the page": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort by price": {
+      "main": [
+        [
+          {
+            "node": "Save to Microsoft Excel 365",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to CSV File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract individual book price": {
+      "main": [
+        [
+          {
+            "node": "Sort by price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch website content": {
+      "main": [
+        [
+          {
+            "node": "Extract all books from the page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a7e3b8df-fe1b-495a-b297-c16c034a911a",
+  "meta": {
+    "instanceId": "9528b29122a832c8208d0d3bd60d774740c99059fdc4b367bf261f06ad43aaf6"
+  },
+  "id": "tpE8aiQSPmvAXey8",
+  "tags": []
+}

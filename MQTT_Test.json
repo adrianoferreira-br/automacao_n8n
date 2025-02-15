@@ -1,0 +1,216 @@
+{
+  "name": "MQTT Test",
+  "nodes": [
+    {
+      "parameters": {
+        "topics": "AdrPresto",
+        "options": {
+          "jsonParseBody": true,
+          "onlyMessage": true,
+          "parallelProcessing": true
+        }
+      },
+      "type": "n8n-nodes-base.mqttTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2340,
+        -620
+      ],
+      "id": "e42a3ebb-73a3-45b8-9e4e-cc8f357db542",
+      "name": "MQTT Trigger",
+      "notesInFlow": false,
+      "credentials": {
+        "mqtt": {
+          "id": "nsAdd1AVCDwzFZEy",
+          "name": "MQTT ESP32 Presto Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1WVunfKCOt5Srt19RdmZy0vEIwldCySsRA8Iw2fC2JQs/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "ESP32",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1WVunfKCOt5Srt19RdmZy0vEIwldCySsRA8Iw2fC2JQs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "V": "={{ $json.V }}",
+            "I": "={{ $json.I }}",
+            "Avg": "={{ $json.Avg }}",
+            "FP": "={{ $json.FP }}",
+            "P": "={{ $json.P }}",
+            "Bat": "={{ $json.Bat }}",
+            "time": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "time"
+          ],
+          "schema": [
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "V",
+              "displayName": "V",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "I",
+              "displayName": "I",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "P",
+              "displayName": "P",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FP",
+              "displayName": "FP",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Bat",
+              "displayName": "Bat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Avg",
+              "displayName": "Avg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1620,
+        -620
+      ],
+      "id": "45c0b62c-d994-4f2e-8c63-d6a0a0fd42ce",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FL33ZBTZkNAQE4Nf",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Presto\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)\nInformações oriundas de uma placa ESP32, via MQTT serão armazenadas no google sheets para um gráfico posterior",
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2520,
+        -880
+      ],
+      "typeVersion": 1,
+      "id": "eab4f779-752c-45c8-95dd-5ca722171320",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Acesse os dados de entrada usando $json\nconst inputData = $json;\n\n// Inicializamos um array para armazenar os dados processados\nconst outputData = [];\n\n// Iteramos sobre cada item do inputData e preparamos para o Google Sheets\ninputData.forEach(item => {\n  outputData.push({\n    json: {\n      time: item.time,\n      V: item.V,\n      I: item.I,\n      P: item.P,\n      Bat: item.Bat,\n      FP: item.FP,\n      Avg: item.Avg\n    }\n  });\n});\n\n// Retorna os dados processados\nreturn outputData;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1960,
+        -620
+      ],
+      "id": "473e33e7-fc31-48d9-92d7-59f86a26cda0",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "MQTT Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Adak",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "0b96e3fc-12b2-4887-933b-1df4a6c0350b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9528b29122a832c8208d0d3bd60d774740c99059fdc4b367bf261f06ad43aaf6"
+  },
+  "id": "k7YZD9RdDiGe6ZBA",
+  "tags": []
+}
